@@ -30,7 +30,7 @@ else
       if (filename.end_with?(".gz"))
         gz = Zlib::GzipReader.new(StringIO.new(file_data))
         buffer = gz.read
-        filename = filename[0..-3]
+        filename = filename[0..-4]
       else
         buffer = file_data
       end
