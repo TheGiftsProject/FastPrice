@@ -3,6 +3,8 @@ require 'nokogiri'
 require 'json'
 require 'cgi'
 
+HTTParty::Basement.default_options.update(verify: false)
+
 def get_login_details
   response = HTTParty.get('https://url.publishedprices.co.il/login')
   doc = Nokogiri::HTML(response)

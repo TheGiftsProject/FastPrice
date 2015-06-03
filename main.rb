@@ -22,6 +22,7 @@ else
 
   download_tasks = []
 
+  Dir.mkdir './files' unless File.exist? './files'
   files.each_with_index do |filename, idx|
     download_tasks.push(Proc.new {
       puts "Downloading file #{filename} (#{idx}/#{files.count})"
@@ -34,6 +35,7 @@ else
       else
         buffer = file_data
       end
+
 
       File.open("./files/" + filename, "wb") do |f|
         f.write(buffer)
