@@ -2,9 +2,7 @@ require 'nokogiri'
 require 'awesome_print'
 require 'json'
 
-items = []
-
-prices_file = './files/PriceFull7290492000005-501-201506030010'
+items = {}
 
 def convert_item(item_from_xml)
 	item = {}
@@ -39,6 +37,10 @@ def print_item(item)
 	ap item
 end
 
+def store_id(chain_id, store_id)
+	"#{store_id}_#{chain_id}"
+end
+
 def read_prices_file(prices_xml)
 	# save common data
 	chain_id = prices_xml.css("ChainId").text
@@ -47,10 +49,30 @@ def read_prices_file(prices_xml)
 	# iterate files
 	prices_xml.css("Items Item").each do |item_xml|
 		item = read_item(item_xml)
-		yield item.merge({
-			chain_id: chain_id,
-			store_id: store_id
-		})
+		merged_item = item.merge({'store_id' => store_id(store_id, chain_id)})
+		yield merged_item
+	end
+end
+
+def add_item_to_db(original_item, items)
+	if items[original_item['item_code']] != nil
+		item = items[original_item['item_code']]
+		item.each_pair do |key, value|
+			if key != 'item_price'
+				item[key] << original_item[key] unless item[key].include? original_item[key]
+			else
+				item[key]["#{original_item['store_id']}"] = original_item[key]
+			end
+		end
+	else
+		item = original_item.clone
+		items[item['item_code']] = item.each_pair do |key, value|
+			if key != 'item_price'
+				item[key] = [value]
+			else
+				item[key] = {"#{item['store_id']}" => value}
+			end
+		end
 	end
 end
 
@@ -58,12 +80,9 @@ Dir["files/PriceFull*"].each_with_index do |filename, index|
 	puts "processing file #{index + 1}: #{filename}"
 	prices_file_xml = Nokogiri::XML(File.read(filename))
 
-	read_prices_file(prices_file_xml) {|item| items << item}
+	read_prices_file(prices_file_xml) {|item| add_item_to_db(item, items) }
+	File.open 'db/items.json', 'w' do |file|
+		file.write items.to_json
+	end
 end
-puts items.count
-
-File.open 'db/items.json', 'w' do |file|
-	file.write items.to_json
-end
-
 
