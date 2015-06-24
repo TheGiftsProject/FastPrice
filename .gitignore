@@ -35,3 +35,6 @@ build/
 .rvmrc
 
 tags
+#FastPrice
+files/**
+db/**
