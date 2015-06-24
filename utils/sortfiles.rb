@@ -31,7 +31,7 @@ files.each do |file|
 end
 
 all_details = all_details.sort_by do |d|
-  d[:timestamp] || ""
+  (d[:storeId] || "") + (d[:timestamp] || "") + (d[:type] || "")
 end
 
 all_details.each do |details|

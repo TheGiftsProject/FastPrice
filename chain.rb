@@ -60,7 +60,7 @@ def print_chain(chain)
     subchain.stores.each do |store|
       puts "<tr>"
       puts "<td>#{store.id}</td>"
-      puts "<td>#{store.name}</td>"
+      puts "<td><a href='#{store.id}.html'>#{store.name}</a></td>"
       puts "<td>#{store.type}</td>"
       puts "<td>#{store.address}</td>"
       puts "<td>#{store.city}</td>"
@@ -72,5 +72,5 @@ def print_chain(chain)
   puts "</body></html>"
 end
 
-chain = parse_stores_file("./files/Stores7290492000005-201506030700.xml")
+chain = parse_stores_file("./files/Stores7290492000005-201506240700.xml")
 print_chain(chain)

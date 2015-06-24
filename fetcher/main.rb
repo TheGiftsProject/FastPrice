@@ -24,21 +24,30 @@ else
 
   files.each_with_index do |filename, idx|
     download_tasks.push(Proc.new {
-      puts "Downloading file #{filename} (#{idx}/#{files.count})"
-      file_data = download_file(cookie, filename)
+      attempt = 0
+      success = false
+      while (!success) do
+        begin
+          puts "Downloading file #{filename} (#{idx}/#{files.count}) Attempt #{attempt}"
+          file_data = download_file(cookie, filename)
 
-      if (filename.end_with?(".gz"))
-        gz = Zlib::GzipReader.new(StringIO.new(file_data))
-        buffer = gz.read
-        filename = filename[0..-4]
-      else
-        buffer = file_data
-      end
+          if (filename.end_with?(".gz"))
+            gz = Zlib::GzipReader.new(StringIO.new(file_data))
+            buffer = gz.read
+            filename = filename[0..-4]
+          else
+            buffer = file_data
+          end
 
-      File.open("./files/" + filename, "wb") do |f|
-        f.write(buffer)
+          File.open("./files/" + filename, "wb") do |f|
+            f.write(buffer)
+          end
+          puts "Wrote file #{filename}"
+          success = true
+        rescue
+          attempt += 1
+        end
       end
-      puts "Wrote file #{filename}"
     })
   end
 
