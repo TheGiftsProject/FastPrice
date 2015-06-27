@@ -3,7 +3,6 @@ require 'awesome_print'
 require 'json'
 require 'fileutils'
 
-# items = {}
 store_items = {}
 
 ITEM_PRICE_UPDATE_DATE = 'price_update_date'
@@ -43,10 +42,6 @@ def read_item(item_xml)
 	convert_item(item_from_xml)
 end
 
-# def print_item(item)
-# 	ap item
-# end
-
 def store_id(chain_id, store_id)
 	"#{store_id}_#{chain_id}"
 end
@@ -59,27 +54,6 @@ def read_prices_file(prices_xml)
 	end
 end
 
-def add_item_to_db(original_item, items)
-	if items[original_item['item_code']] != nil
-		item = items[original_item['item_code']]
-		item.each_pair do |key, value|
-			if key != 'item_price'
-				item[key] << original_item[key] unless item[key].include? original_item[key]
-			else
-				item[key]["#{original_item['store_id']}"] = original_item[key]
-			end
-		end
-	else
-		item = original_item.clone
-		items[item['item_code']] = item.each_pair do |key, value|
-			if key != 'item_price'
-				item[key] = [value]
-			else
-				item[key] = {"#{item['store_id']}" => value}
-			end
-		end
-	end
-end
 
 def write_barcode_file(item)
 	filename = "db/barcodes/#{item['item_code']}.json"
@@ -118,9 +92,5 @@ Dir["files/PriceFull*"].each_with_index do |filename, index|
 	end
 
 	write_store_file(store_id, chain_id, store_items)
-
-	# File.open 'db/items.json', 'w' do |file|
-	# 	file.write items.to_json
-	# end
 end
 
