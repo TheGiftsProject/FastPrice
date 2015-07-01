@@ -13,9 +13,19 @@ get '/itemsByStore' do
 
 	store_items_string = File.read store_filename
 	store_items = JSON.parse store_items_string
+		
+	output = {}
+	store_items.each do |item_barcode, price|
+		item_filename = "db/barcodes/#{item_barcode}.json"
+		next unless File.exist? item_filename
 
-	
-	store_items.to_json
+		item_string = File.read item_filename
+		item_hash = JSON.parse(item_string)
+		item_hash['price'] = price
+		output[item_barcode] = item_hash
+	end
+
+	output.to_json
 end
 
 
