@@ -1,5 +1,5 @@
-require "./cerberus.rb"
-require "./thread_pool.rb"
+require "./fetcher/cerberus.rb"
+require "./fetcher/thread_pool.rb"
 require "zlib"
 
 puts "Loading login page..."
@@ -49,15 +49,11 @@ else
           attempt += 1
         end
       end
-<<<<<<< HEAD:fetcher/main.rb
-=======
-
 
       File.open("./files/" + filename, "wb") do |f|
         f.write(buffer)
       end
       puts "Wrote file #{filename}"
->>>>>>> 9effded73d4e43a9642ce7411ff34897b71fd48f:main.rb
     })
   end
 
