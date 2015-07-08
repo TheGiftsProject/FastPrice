@@ -1,5 +1,5 @@
-require "./fetcher/cerberus.rb"
-require "./fetcher/thread_pool.rb"
+require_relative "cerberus.rb"
+require_relative "thread_pool.rb"
 require "zlib"
 
 puts "Loading login page..."
